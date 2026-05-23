@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Visão Computacional Primeiros Passos</title>
+
+  <!-- Fontes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Reveal.js core -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reset.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css" />
+
+  <!-- Tema custom -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HUD fixo: identidade no topo -->
+  <div class="hud">
+    <span class="hud-tag">// VISÃO_COMPUTACIONAL</span>
+    <span class="hud-status"><span class="dot"></span>cv.model running</span>
+  </div>
+
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ============ SLIDE 1 CAPA ============ -->
+      <section data-background-color="#0D1117" class="slide-cover">
+        <div class="dot-matrix" aria-hidden="true"></div>
+
+        <!-- Equações flutuantes de fundo -->
+        <div class="eq-field" aria-hidden="true">
+          <span class="eq" style="top:14%; left:8%;">I(x, y) = [ R, G, B ]</span>
+          <span class="eq" style="top:74%; left:12%;">(f * g)(x) = Σ f(t)·g(x−t)</span>
+          <span class="eq" style="top:22%; right:9%;">y = σ(W·x + b)</span>
+          <span class="eq" style="top:62%; right:7%;">∇L = ∂L/∂W</span>
+          <span class="eq eq-matrix" style="top:44%; left:6%;">[ 0&nbsp; 1&nbsp; 0 ]<br>[ 1&nbsp;−4&nbsp; 1 ]<br>[ 0&nbsp; 1&nbsp; 0 ]</span>
+        </div>
+
+        <div class="cover-content">
+          <p class="kicker">Aula 00 Primeiros Passos</p>
+          <h1 class="cover-title">
+            Visão <span class="bbox-word" data-label="object: 0.99">Computacional</span>
+          </h1>
+          <p class="cover-sub">Como ensinamos máquinas a <em>enxergar</em> e por que tudo começa numa matriz.</p>
+
+          <div class="cover-meta">
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+            <span class="meta-pill">Tati Oliveira | Ruan Haack</span>
+            <span class="meta-pill mono">~15 min</span>
+            <span class="meta-pill mono">2026</span>
+          </div>
+        </div>
+
+        <div class="corner-brackets" aria-hidden="true"></div>
+      </section>
+
+      <!-- ============ SLIDE 2 PERGUNTA INTRIGANTE ============ -->
+      <section data-background-color="#0D1117" class="slide-hook">
+        <div class="hook-wrap">
+          <p class="hook-pre fragment fade-in">Lembra da aula de matrizes, no ensino médio?</p>
+
+          <blockquote class="hook-quote fragment fade-up">
+            "Você <span class="strike">nunca mais</span> vai usar isso na vida."
+          </blockquote>
+
+          <p class="hook-punch fragment fade-up">
+            Vou provar, em 15 minutos, que estavam
+            <span class="bbox-word neon-lime" data-label="claim: false">redondamente errados.</span>
+          </p>
+
+          <p class="hook-foot mono fragment fade-in">→ toda imagem que você vê hoje é, literalmente, uma matriz.</p>
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 3 COMO A IA APRENDE ============ -->
+      <section data-background-color="#0D1117" class="slide-concept">
+        <header class="section-head">
+          <span class="section-idx mono">01</span>
+          <h2>Como a IA aprende a enxergar</h2>
+        </header>
+
+        <div class="two-col">
+          <!-- Coluna texto -->
+          <div class="col-text">
+            <ul class="tech-list">
+              <li class="fragment fade-up">
+                A imagem é uma <strong>grade de pixels</strong> cada pixel, um número de intensidade.
+              </li>
+              <li class="fragment fade-up">
+                Um <strong>kernel</strong> (matriz pequena, ex. <code class="mono">3×3</code>) desliza sobre a imagem.
+              </li>
+              <li class="fragment fade-up">
+                Em cada posição: <strong>multiplica e soma</strong> os valores sobrepostos.
+              </li> 
+              <li class="fragment fade-up">
+                O resultado realça <strong>bordas, texturas e padrões</strong> base de toda CNN - Convolutional Neural Network (Rede Neural Convolucional).
+              </li>
+              <li class="fragment fade-up">
+                Camadas sucessivas aprendem conceitos cada vez mais <strong>abstratos</strong>: pixels → bordas → formas → objetos.
+              </li>
+            </ul>
+
+            <pre class="code-block fragment fade-up"><code class="mono"><span class="c-com"># kernel de detecção de bordas</span>
+kernel = [[ 0, -1,  0],
+          [-1,  <span class="c-key">4</span>, -1],
+          [ 0, -1,  0]]
+saida = <span class="c-fn">convolve</span>(imagem, kernel)</code></pre>
+          </div>
+
+          <!-- Coluna: imagem como a IA aprende -->
+          <figure class="col-visual">
+            <div class="bbox-frame img-contain" data-label="training · epoch 42">
+              <img src="comoaIAaprende.webp" alt="Como a IA aprende a enxergar" class="slide-img" />
+            </div>
+            <figcaption class="mono">hierarquia de aprendizado: pixel → feature → classe</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 4 DESAFIOS: AMBIGUIDADE VISUAL ============ -->
+      <section data-background-color="#0D1117" class="slide-challenge">
+        <header class="section-head">
+          <span class="section-idx mono">02</span>
+          <h2>Por que ainda é difícil Desafio #1</h2>
+        </header>
+
+        <p class="challenge-lead fragment fade-in">
+          Para nós é óbvio. Para o modelo, <span class="bbox-word" data-label="ambiguous">ambiguidade pura.</span>
+        </p>
+
+        <!-- Layout especial: imagem grande + cards de desafio -->
+        <div class="challenge-main">
+          <figure class="challenge-hero fragment fade-up">
+            <div class="bbox-frame img-contain" data-label="chihuahua 0.51 | muffin 0.49">
+              <img src="dogs-parecidos.png" alt="Chihuahua vs Muffin ambiguidade visual" class="slide-img" />
+              <span class="bbox-label conflict">chihuahua&nbsp;0.51</span>
+              <span class="bbox-label conflict alt">muffin&nbsp;0.49</span>
+            </div>
+            <figcaption>Ambiguidade visual: Chihuahua <span class="mono">vs</span> Muffin</figcaption>
+          </figure>
+
+          <div class="challenge-side">
+            <div class="challenge-card fragment fade-up">
+              
+              <div>
+                <strong>Aparência similar</strong>
+                <p>Texturas, cores e formas podem ser idênticas entre classes completamente diferentes.</p>
+              </div>
+            </div>
+            <div class="challenge-card fragment fade-up">
+              
+              <div>
+                <strong>Variação intra-classe</strong>
+                <p>Um mesmo objeto (cadeira, cão, carro) varia enormemente de instância para instância.</p>
+              </div>
+            </div>
+            <div class="challenge-card fragment fade-up">
+              
+              <div>
+                <strong>Escala e perspectiva</strong>
+                <p>O modelo deve reconhecer o mesmo objeto visto de perto, de longe, em ângulos diferentes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 5 DESAFIOS: ESCALA DE CINZA / PERDA DE INFO ============ -->
+      <section data-background-color="#0D1117" class="slide-challenge">
+        <header class="section-head">
+          <span class="section-idx mono">02</span>
+          <h2>Por que ainda é difícil Desafio #2</h2>
+        </header>
+
+        <div class="two-col two-col-sym">
+          <figure class="col-visual fragment fade-up">
+            <div class="bbox-frame img-contain" data-label="grayscale · info loss">
+              <img src="abraham_escaladecinza.webp" alt="Abraham Lincoln em escala de cinza" class="slide-img" />
+            </div>
+            <figcaption class="mono">conversão para escala de cinza · perda de canal cromático</figcaption>
+          </figure>
+
+          <div class="col-text">
+            <ul class="tech-list">
+              <li class="fragment fade-up">
+                <strong>Perda de informação cromática:</strong> converter para escala de cinza elimina diferenças que o humano usa para separar objetos (fruta madura vs. verde, semáforo vermelho vs. amarelo).
+              </li>
+              <li class="fragment fade-up">
+                <strong>Iluminação e ruído:</strong> a mesma cena à noite, em névoa ou com super-exposição gera distribuições de pixel completamente diferentes para o mesmo objeto.
+              </li>
+              <li class="fragment fade-up">
+                <strong>Oclusão:</strong> quando parte do objeto é tapada, o modelo deve inferir o todo a partir do fragmento visível.
+              </li>
+              <li class="fragment fade-up">
+                <strong>Solução parcial:</strong> treinar com <em>data augmentation</em> rotações, flips, variações de brilho para o modelo generalizar melhor.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 6 APLICABILIDADE REAL ============ -->
+      <section data-background-color="#0D1117" class="slide-challenge">
+        <header class="section-head">
+          <span class="section-idx mono">03</span>
+          <h2>Onde a Visão Computacional já está sendo usada</h2>
+        </header>
+
+        <div class="two-col two-col-sym">
+          <figure class="col-visual fragment fade-up">
+            <div class="bbox-frame img-contain" data-label="real-world · deployment">
+              <img src="imagem.webp" alt="Aplicação real de visão computacional" class="slide-img" />
+            </div>
+            <figcaption class="mono">detecção e classificação em ambiente real</figcaption>
+          </figure>
+
+          <div class="col-text">
+            <div class="app-grid">
+              <div class="app-pill fragment fade-up"><span><strong>Saúde:</strong> detecção de tumores em raio-X e ressonâncias com precisão superior a radiologistas em alguns cenários.</span></div>
+              <div class="app-pill fragment fade-up"><span><strong>Veículos autônomos:</strong> identificação de pedestres, sinais, faixas e obstáculos em tempo real.</span></div>
+              <div class="app-pill fragment fade-up"><span><strong>Agricultura:</strong> drones monitoram lavouras detectando pragas e estimando produtividade por imagem.</span></div>
+              <div class="app-pill fragment fade-up"><span><strong>Segurança:</strong> reconhecimento facial, detecção de intrusos e análise de comportamento em câmeras.</span></div>
+              <div class="app-pill fragment fade-up"><span><strong>Indústria:</strong> controle de qualidade automático identifica defeitos em peças que o olho humano não percebe.</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SLIDE 7 VÍDEO ============ -->
+      <section data-background-color="#0D1117" class="slide-media">
+        <header class="media-head">
+          <span class="section-idx mono">04</span>
+          <h2>Visão Computacional com Drones em ação assista</h2>
+        </header>
+
+        <div class="video-wrapper bbox-frame" data-label="video · youtube">
+          <iframe
+            src="https://www.youtube.com/embed/xXkhEHzm1eE"
+            title="Visão Computacional em ação"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            class="yt-embed"
+          ></iframe>
+        </div>
+
+        <p class="media-caption mono">▶ pressione play · use F para tela cheia dentro do slide</p>
+      </section>
+
+      <!-- ============ SLIDE 8 ENCERRAMENTO ============ -->
+      <section data-background-color="#0D1117" class="slide-close">
+        <div class="close-wrap">
+          <p class="kicker">fim · aula 00</p>
+          <h2 class="close-title">A visão computacional já está no seu bolso.</h2>
+
+          <ul class="everyday">
+            <li class="mono fragment fade-in">Face ID</li>
+            <li class="mono fragment fade-in">filtros de câmera</li>
+            <li class="mono fragment fade-in">leitura de placas</li>
+            <li class="mono fragment fade-in">diagnóstico médico</li>
+            <li class="mono fragment fade-in">carros autônomos</li>
+            <li class="mono fragment fade-in">drones agrícolas</li>
+            <li class="mono fragment fade-in">drones urbanos</li>
+            <li class="mono fragment fade-in">controle de qualidade</li>
+          </ul>
+
+          <p class="close-cta fragment fade-up">
+            Procure <span class="bbox-word neon-lime" data-label="next">uma aplicação por dia</span>.
+            Você vai parar de ver o mundo do mesmo jeito.
+          </p>
+
+          <p class="close-thanks fragment fade-in">Obrigado. <span class="mono" perguntas?</span></p>
+        </div>
+        <div class="corner-brackets" aria-hidden="true"></div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+  <script>
+    Reveal.initialize({
+      width: 1280,
+      height: 720,
+      margin: 0.045,
+      minScale: 0.2,
+      maxScale: 1.6,
+      center: true,
+      hash: true,
+      controls: true,
+      progress: true,
+      slideNumber: 'c / t',
+      transition: 'fade',
+      transitionSpeed: 'fast',
+      backgroundTransition: 'fade'
+    });
+
+    // ----- Gera a grade de pixels do slide de convolução -----
+    (function buildPixelGrid() {
+      const grid = document.getElementById('pixelGrid');
+      if (!grid) return;
+      const N = 49;
+      for (let i = 0; i < N; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'px';
+        const v = 22 + ((i * 53 + 31) % 210);
+        cell.style.background = `rgb(${v},${v},${v})`;
+        grid.appendChild(cell);
+      }
+    })();
+  </script>
+</body>
+</html>
